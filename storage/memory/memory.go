@@ -2,7 +2,6 @@ package memory
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"sync"
 	"time"
@@ -14,28 +13,20 @@ import (
 type Meta interface {
 	GetId() string
 
-	SetId(string)
 	SetCreatedTime(time.Time)
 	SetUpdatedTime(time.Time)
-}
-
-type Uint64er interface {
-	Uint64() uint64
+	SetAccessedTime(time.Time)
 }
 
 type Storage[T Meta] struct {
-	r Uint64er
-
 	data    map[string]T
 	watches *watchList[T]
 
 	lock sync.Mutex
 }
 
-func New[T Meta](r Uint64er) *Storage[T] {
+func New[T Meta]() *Storage[T] {
 	return &Storage[T]{
-		r: r,
-
 		data:    make(map[string]T),
 		watches: newWatchList[T](),
 	}
@@ -52,15 +43,14 @@ func (s *Storage[T]) Create(
 
 	log.Printf("creating %T %s", t, t.GetId())
 
-	id := fmt.Sprintf("%x", s.r.Uint64())
-	if _, ok := s.data[id]; ok {
+	if _, ok := s.data[t.GetId()]; ok {
 		return t, status.Error(codes.AlreadyExists, "already exists")
 	}
 
 	now := time.Now()
-	t.SetId(id)
 	t.SetCreatedTime(now)
 	t.SetUpdatedTime(now)
+	t.SetAccessedTime(now)
 
 	s.data[t.GetId()] = t
 	go s.watches.notify(t)
@@ -85,6 +75,8 @@ func (s *Storage[T]) Get(
 	if !ok {
 		return t, status.Error(codes.NotFound, "not found")
 	}
+
+	t.SetAccessedTime(time.Now())
 
 	return t, nil
 }
@@ -123,6 +115,7 @@ func (s *Storage[T]) List(
 	var ts []T
 	for _, t := range s.data {
 		ts = append(ts, t)
+		t.SetAccessedTime(time.Now())
 	}
 
 	return ts, nil
@@ -145,6 +138,7 @@ func (s *Storage[T]) Update(
 	}
 
 	t.SetUpdatedTime(time.Now())
+	t.SetAccessedTime(time.Now())
 
 	s.data[id] = t
 	go s.watches.notify(t)
