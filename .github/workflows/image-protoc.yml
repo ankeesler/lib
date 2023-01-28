@@ -3,7 +3,7 @@ name: image-protoc
 on:
   push:
     branches: [ main ]
-    paths: [ image/protoc ]
+    paths: [ image/protoc/** ]
 
 jobs:
   build-and-push:
