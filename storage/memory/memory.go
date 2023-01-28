@@ -13,12 +13,9 @@ import (
 
 type Meta interface {
 	GetId() string
+
 	SetId(string)
-
-	GetCreatedTime() time.Time
 	SetCreatedTime(time.Time)
-
-	GetUpdatedTime() time.Time
 	SetUpdatedTime(time.Time)
 }
 
