@@ -45,23 +45,24 @@ func (s *Storage[T]) Create(
 	ctx context.Context,
 	t T,
 ) (T, error) {
-	log.Printf("waiting to create %T %s", t, t.ID())
+	log.Printf("waiting to create %T %s", t, t.GetId())
 
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Printf("creating %T %s", t, t.ID())
+	log.Printf("creating %T %s", t, t.GetId())
 
 	id := fmt.Sprintf("%x", s.r.Uint64())
 	if _, ok := s.data[id]; ok {
 		return t, status.Error(codes.AlreadyExists, "already exists")
 	}
 
-	t.SetID(id)
-	t.SetCreatedTime(time.Now())
-	t.SetUpdatedTime(t.CreatedTime())
+	now := time.Now()
+	t.SetId(id)
+	t.SetCreatedTime(now)
+	t.SetUpdatedTime(now)
 
-	s.data[t.ID()] = t
+	s.data[t.GetId()] = t
 	go s.watches.notify(t)
 
 	return t, nil
@@ -131,14 +132,14 @@ func (s *Storage[T]) Update(
 	ctx context.Context,
 	t T,
 ) (T, error) {
-	log.Printf("waiting to update %T %s", t, t.ID())
+	log.Printf("waiting to update %T %s", t, t.GetId())
 
 	s.lock.Lock()
 	defer s.lock.Unlock()
 
-	log.Printf("updating %T %s", t, t.ID())
+	log.Printf("updating %T %s", t, t.GetId())
 
-	id := t.ID()
+	id := t.GetId()
 	if _, ok := s.data[id]; !ok {
 		return t, status.Error(codes.NotFound, "not found")
 	}

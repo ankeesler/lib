@@ -61,21 +61,21 @@ func (l *watchList[T]) add(ctx context.Context, id *string) chan T {
 }
 
 func (l *watchList[T]) notify(t T) {
-	log.Printf("kicking watch for %T %s", t, t.ID())
+	log.Printf("kicking watch for %T %s", t, t.GetId())
 
 	l.lock.Lock()
 	defer l.lock.Unlock()
 
 	var toDelete []string
 	for id, watchCtx := range l.m {
-		if watchCtx.id == nil || *watchCtx.id == t.ID() {
-			log.Printf("about to watch id %+v from %s", t.ID(), watchCtx.source)
+		if watchCtx.id == nil || *watchCtx.id == t.GetId() {
+			log.Printf("about to watch id %+v from %s", t.GetId(), watchCtx.source)
 			select {
 			case <-watchCtx.ctx.Done():
-				log.Printf("watched was closed for id %+v from %s", t.ID(), watchCtx.source)
+				log.Printf("watched was closed for id %+v from %s", t.GetId(), watchCtx.source)
 				toDelete = append(toDelete, id)
 			case watchCtx.c <- t:
-				log.Printf("watched id %+v from %s", t.ID(), watchCtx.source)
+				log.Printf("watched id %+v from %s", t.GetId(), watchCtx.source)
 			}
 		}
 	}
