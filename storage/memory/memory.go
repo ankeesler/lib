@@ -12,13 +12,13 @@ import (
 )
 
 type Meta interface {
-	ID() string
-	SetID(string)
+	GetId() string
+	SetId(string)
 
-	CreatedTime() time.Time
+	GetCreatedTime() time.Time
 	SetCreatedTime(time.Time)
 
-	UpdatedTime() time.Time
+	GetUpdatedTime() time.Time
 	SetUpdatedTime(time.Time)
 }
 
