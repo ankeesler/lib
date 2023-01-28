@@ -71,6 +71,8 @@ func NewGRPCServer(c *GRPCServerConfig) *GRPCServer {
 
 func (s *GRPCServer) Addr() net.Addr { return s.l.Addr() }
 
+func (s *GRPCServer) ServiceRegistar() grpc.ServiceRegistrar { return s.s }
+
 func (s *GRPCServer) Run(ctx context.Context) error {
 	var err error
 	s.l, err = net.Listen("tcp", fmt.Sprintf(":%d", s.port)) // Closed by grpc.Serve()
