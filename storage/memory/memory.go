@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"math/rand"
 	"sync"
 	"time"
 
@@ -23,8 +22,12 @@ type Meta interface {
 	SetUpdatedTime(time.Time)
 }
 
+type Uint64er interface {
+	Uint64() uint64
+}
+
 type Storage[T Meta] struct {
-	r *rand.Rand
+	r Uint64er
 
 	data    map[string]T
 	watches *watchList[T]
@@ -32,7 +35,7 @@ type Storage[T Meta] struct {
 	lock sync.Mutex
 }
 
-func New[T Meta](r *rand.Rand) *Storage[T] {
+func New[T Meta](r Uint64er) *Storage[T] {
 	return &Storage[T]{
 		r: r,
 
