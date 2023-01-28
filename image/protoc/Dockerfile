@@ -1,5 +1,7 @@
 FROM ubuntu as protoc
 
+# Temporary comment to test github actions...
+
 WORKDIR /workspace
 
 RUN apt-get update && apt-get install unzip curl -y
