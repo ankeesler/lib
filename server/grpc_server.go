@@ -109,7 +109,7 @@ func unaryLogFunc(
 ) (interface{}, error) {
 	log.Printf("unary req: %s: %v", info.FullMethod, textproto(req))
 	rsp, err := handler(ctx, req)
-	log.Printf("unary rsp: %s: %v %v", info.FullMethod, textproto(req), err)
+	log.Printf("unary rsp: %s: %v %v", info.FullMethod, textproto(rsp), err)
 	return rsp, err
 }
 
