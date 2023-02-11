@@ -133,6 +133,9 @@ func (l *loggingStream) SendMsg(m interface{}) error {
 }
 
 func textproto(i any) string {
+	if i == nil {
+		return ""
+	}
 	return prototext.MarshalOptions{
 		Multiline: true,
 	}.Format(i.(protoreflect.ProtoMessage))
