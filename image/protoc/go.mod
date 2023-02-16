@@ -8,6 +8,7 @@ require (
 	github.com/grpc-ecosystem/protoc-gen-grpc-gateway-ts v1.1.2
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.2.0
 	google.golang.org/protobuf v1.28.1
+	github.com/pseudomuto/protoc-gen-doc v1.5.1
 )
 
 require (
